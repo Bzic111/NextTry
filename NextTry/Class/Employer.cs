@@ -7,5 +7,7 @@ namespace NextTry.Class
 {
     public class Employer
     {
+        public int Id;
+        public string Name;
     }
 }

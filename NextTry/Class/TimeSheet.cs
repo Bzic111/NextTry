@@ -7,5 +7,9 @@ namespace NextTry.Class
 {
     public class TimeSheet
     {
+        public int Id;
+        public int EmployerId;
+        public string Title;
+        public int TotalHours;
     }
 }

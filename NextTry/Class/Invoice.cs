@@ -7,5 +7,8 @@ namespace NextTry.Class
 {
     public class Invoice
     {
+        public int Id;
+        public int Cost;
+        public List<TimeSheet> ListOfTasks;
     }
 }
