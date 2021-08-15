@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 
 namespace NextTry.Class
 {
-    public class Invoice
+    public class Sender
     {
-        public int Id;
-        public int Cost;
-        public List<TimeSheet> ListOfTasks;
     }
 }

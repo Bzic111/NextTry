@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace NextTry.Class
 {
-    public class Employer
+    public class Customer
     {
-        public int Id;
-        public string Name;
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
