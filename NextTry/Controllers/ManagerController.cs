@@ -14,11 +14,11 @@ namespace NextTry.Controllers
     [ApiController]
     public class ManagerController : ControllerBase
     {
-        private ILogger _logger;
+        private ILogger<ManagerController> _logger;
         public ManagerController(ILoggerFactory loggerFactory)
         {
             loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "log.txt"));
-            _logger = loggerFactory.CreateLogger("FileLogger");
+            _logger = (ILogger<ManagerController>)loggerFactory.CreateLogger("FileLogger");
         }
 
         //create---------------------------------------------------------------------------------------------------------------------------------------------
