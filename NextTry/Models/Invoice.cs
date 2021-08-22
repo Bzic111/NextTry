@@ -8,7 +8,10 @@ namespace NextTry.Class
     public class Invoice
     {
         public int Id { get; set; }
-        public int Cost { get; set; }
-        public List<TimeSheet> ListOfTasks { get; set; }
+        public decimal HourCost { get; set; }
+        public List<int> Tasks { get; set; }
+        public int EmployerId { get; set; }
+        public int ContractId { get; set; }
+        public bool IsClosed { get; set; }
     }
 }

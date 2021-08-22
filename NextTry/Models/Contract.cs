@@ -8,10 +8,10 @@ namespace NextTry.Class
 {
     public class Contract
     {
-        //[Key]
         public long Id { get; set; }
         public int CustomerId { get; set; }
         public bool Status { get; set; }
+        public decimal FullCost { get; set; }
         public List<int> Invoices { get; set; }
     }
 }

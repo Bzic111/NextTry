@@ -7,11 +7,11 @@ namespace NextTry.Interface
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        Task Create(TEntity item);
-        Task<TEntity> FindById(int id);
-        Task<IEnumerable<TEntity>> Get();
-        Task<IEnumerable<TEntity>> Get(Func<TEntity, bool> predicate);
-        Task Remove(TEntity item);
-        Task Update(TEntity item);
+        void Create(TEntity item);
+        TEntity FindById(int id);
+        IEnumerable<TEntity> Get();
+        IEnumerable<TEntity> Get(Func<TEntity, bool> predicate);
+        void Remove(TEntity item);
+        void Update(TEntity item);
     }
 }

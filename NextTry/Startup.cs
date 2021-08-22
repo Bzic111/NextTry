@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NextTry.Class;
+using NextTry.Interface;
 
 namespace NextTry
 {
@@ -28,10 +29,11 @@ namespace NextTry
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddSingleton<ContractDbContext>();
             services.AddControllers();
             services.AddSwaggerGen();
-            //services.AddSingleton<ContractDbContext>();
-            services.AddDbContext<ContractDbContext>();
+            services.AddSingleton<ContractDbContext>();
+            services.AddSingleton<Worker>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

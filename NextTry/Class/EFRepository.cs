@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using NextTry.Interface;
 
 namespace NextTry.Class
@@ -11,43 +13,66 @@ namespace NextTry.Class
     {
         DbContext _context;
         DbSet<TEntity> _DBSet;
-        public EFRepository(DbContext context)
+        public EFRepository(ContractDbContext context)
         {
             _context = context;
             _DBSet = context.Set<TEntity>();
         }
-
-        async Task IRepository<TEntity>.Create(TEntity item)
+        public void Create(TEntity item)
         {
-            await _DBSet.AddAsync(item);
-            await _context.SaveChangesAsync();
+            _DBSet.Add(item);
+            _context.SaveChanges();
         }
-
-        async Task<TEntity> IRepository<TEntity>.FindById(int id)
+        public TEntity FindById(int id)
         {
-            return await _DBSet.FindAsync(id);
+            return _DBSet.Find(id);
         }
-
-        async Task<IEnumerable<TEntity>> IRepository<TEntity>.Get()
+        public TEntity FindByIdNoTracking(int id)
         {
-            return await Task.Run(() => _DBSet.AsNoTracking().ToListAsync());  
+            var entity = _DBSet.Find(id);
+            _context.Entry(entity).State = EntityState.Detached;
+            return entity;
         }
-
-        async Task<IEnumerable<TEntity>> IRepository<TEntity>.Get(Func<TEntity, bool> predicate)
+        public IEnumerable<TEntity> Get()
         {
-            return await Task.Run(() => _DBSet.AsNoTracking().Where(predicate).ToList());
+            return _DBSet.AsNoTracking().ToList();  
         }
-
-        async Task IRepository<TEntity>.Remove(TEntity item)
+        public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)
         {
-            await Task.Run(()=>_DBSet.Remove(item));            
-            await _context.SaveChangesAsync();
+            return _DBSet.AsNoTracking().Where(predicate).ToList();
         }
-
-        async Task IRepository<TEntity>.Update(TEntity item)
+        public IEnumerable<TEntity> GetTracking(Func<TEntity, bool> predicate)
         {
-            await Task.Run(()=>_context.Entry(item).State = EntityState.Modified);
-            await _context.SaveChangesAsync();
+            return _DBSet.Where(predicate).ToList();
+        }
+        public void Remove(TEntity item)
+        {
+            _DBSet.Remove(item);
+            _context.SaveChanges();
+        }
+        public void Update(TEntity item)
+        {
+            _context.Entry(item).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
+        public IEnumerable<TEntity> GetWithInclude(Func<TEntity, bool> predicate, params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            var query = Include(includeProperties);
+            return query.Where(predicate).ToList();
+        }
+        public IEnumerable<TEntity> GetWithInclude(params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            return Include(includeProperties).ToList();
+        }
+        private IQueryable<TEntity> Include(params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            IQueryable<TEntity> query = _DBSet.AsNoTracking();
+            return includeProperties.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+        }
+        public void SaveChanges() => _context.SaveChanges();
+        public void Test(int employerId)
+        {
+            //IEnumerable<Invoice> invoices = _DBSet.Select<Invoice> .All<Invoice>(p => p.EmployerId = employerId)
         }
     }
 }
