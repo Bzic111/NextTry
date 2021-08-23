@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using NextTry.Class;
 using NextTry.Interface;
 
@@ -34,6 +34,7 @@ namespace NextTry.Controllers
         }
 
         //create---------------------------------------------------------------------------------------------------------------------------------------------
+        
         //[HttpPost("db/add/contract/CustomerId/{cId}/status/{st}")]
         //public async Task<IActionResult> CreateColumnInTable([FromRoute] int cId, [FromRoute] int st)
         //{
@@ -50,6 +51,8 @@ namespace NextTry.Controllers
         //    _logger.LogInformation("creating invoice");
         //    return Ok();
         //}
+
+
         [HttpPost("db/new/contract/customerId/{cId}")]
         public async Task<IActionResult> CreateNewContract([FromRoute] int cId)
         {
@@ -81,7 +84,38 @@ namespace NextTry.Controllers
         //{
 
         //}
+        
         //read-----------------------------------------------------------------------------------------------------------------------------------------------
+        [HttpGet("db/contract/{cId}")]
+        public async Task<IActionResult> GetContractInfo([FromRoute] int cId)
+        {
+            var result = await Task.Run(() =>_worker.GetContractById(cId));
+            return Ok(result);
+        }
+        [HttpGet("db/invoice/{iId}")]
+        public async Task<IActionResult> GetInvoiceInfo([FromRoute] int iId)
+        {
+            var result = await Task.Run(() => _worker.GetInvoiceById(iId));
+            return Ok(result);
+        }
+        [HttpGet("db/customer/{cId}")]
+        public async Task<IActionResult> GetCustomerInfo([FromRoute] int cId)
+        {
+            var result = await Task.Run(() => _worker.GetCustomerById(cId));
+            return Ok(result);
+        }
+        [HttpGet("db/employer/{eId}")]
+        public async Task<IActionResult> GetEmployerInfo([FromRoute] int eId)
+        {
+            var result = await Task.Run(() => _worker.GetEmployerById(eId));
+            return Ok(result);
+        }
+        [HttpGet("db/timesheet/{tsId}")]
+        public async Task<IActionResult> GetTimeSheetInfo([FromRoute] int tsId)
+        {
+            var result = await Task.Run(() => _worker.GetTimeSheetById(tsId));
+            return Ok(result);
+        }
 
         //update---------------------------------------------------------------------------------------------------------------------------------------------
         [HttpPut("db/add/in/Contract/{cId}/invoice/{iId}")]

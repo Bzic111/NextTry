@@ -34,11 +34,14 @@ namespace NextTry.Class
             _contracts = new EFRepository<Contract>(_DBContext);
             _timeSheets = new EFRepository<TimeSheet>(_DBContext);
         }
+        //create---------------------------------------------------------------------------------------------------------------------------------------------
         public void CreateNewContract(int customerId) => _contracts.Create(new Contract() { CustomerId = customerId });
         public void CreateNewCustomer(string name) => _customers.Create(new Customer() { Name = name });
         public void CreateNewEmployer(string name) => _employers.Create(new Employer() { Name = name });
         public void CreateNewInvoice() => _invoices.Create(new Invoice());
         public void CreateNewTimeSheet(int employerId, string title) => _timeSheets.Create(new TimeSheet() { EmployerId = employerId, Title = title });
+        
+        //update---------------------------------------------------------------------------------------------------------------------------------------------
         public void AddInvoiceToContract(int contractId, int invoiceId)
         {
             IEnumerable<Invoice> invoices = _invoices.GetTracking(p => p.ContractId == 0);
@@ -68,15 +71,40 @@ namespace NextTry.Class
             timeSheet.EmployerId = employerId;
             _timeSheets.Update(timeSheet);
         }
+        
+        //read-----------------------------------------------------------------------------------------------------------------------------------------------
+        public Contract GetContractById(int contractId) => _contracts.FindByIdNoTracking(contractId);
+        public Customer GetCustomerById(int customerId) => _customers.FindByIdNoTracking(customerId);
+        public Invoice GetInvoiceById(int invoiceId) => _invoices.FindByIdNoTracking(invoiceId);
+        public Employer GetEmployerById(int employerId) => _employers.FindByIdNoTracking(employerId);
+        public TimeSheet GetTimeSheetById(int timeSheetId) => _timeSheets.FindByIdNoTracking(timeSheetId);
         public IEnumerable<Customer> GetAllCustomers()
         {
-
-            return _customers.Get();
+            return _customers.Get(p => p.Name != null);
+        }
+        public IEnumerable<Employer> GetAllEmployers()
+        {
+            return _employers.Get(p => p.Name != null);
         }
         public IEnumerable<Contract> GetAllOpenContracts()
         {
             return _contracts.Get(p => p.Status = true);
         }
+        public IEnumerable<Invoice> GetAllOpenInvoices()
+        {
+            return _invoices.Get(p => p.IsClosed == false);
+        }
+        public IEnumerable<TimeSheet> GeetAllTimeSheets()
+        {
+            return _timeSheets.Get(p => p.Title != null);
+        }
+        public IEnumerable<Invoice> GetAllInvoicesByEmployerId(int employerId)
+        {
+            var invoices = _invoices.Get(p => p.EmployerId == employerId);
+            return invoices;
+        }
+
+        //delete---------------------------------------------------------------------------------------------------------------------------------------------
 
     }
     public class ManagerService
