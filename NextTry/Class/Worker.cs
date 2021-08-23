@@ -34,18 +34,49 @@ namespace NextTry.Class
             _contracts = new EFRepository<Contract>(_DBContext);
             _timeSheets = new EFRepository<TimeSheet>(_DBContext);
         }
+        //system---------------------------------------------------------------------------------------------------------------------------------------------
+        public bool Exist(object entity)
+        {
+            switch (entity.GetType().Name)
+            {
+                case "Customer":    return _customers.FindByIdNoTracking(((Customer)entity).Id)!=null;
+                case "Invoice":     return _invoices.FindByIdNoTracking(((Invoice)entity).Id) != null;
+                case "Employer":    return _employers.FindByIdNoTracking(((Employer)entity).Id) != null;
+                case "Contract":    return _contracts.FindByIdNoTracking(((Contract)entity).Id) != null;
+                case "TimeSheet":   return _timeSheets.FindByIdNoTracking(((TimeSheet)entity).Id) != null;
+                default: return false;
+            }
+        }
+
+
         //create---------------------------------------------------------------------------------------------------------------------------------------------
+        public bool CreateNewEmptyEntity<T>(T entity) where T : class
+        {
+            switch (entity.GetType().Name)
+            {
+                case "Customer":
+                    _customers.Create(new Customer());
+                    _customers.
+                case "Invoice": 
+                case "Employer": 
+                case "Contract": 
+                case "TimeSheet": 
+                default:
+                    break;
+            }
+        }
+
         public void CreateNewContract(int customerId) => _contracts.Create(new Contract() { CustomerId = customerId });
         public void CreateNewCustomer(string name) => _customers.Create(new Customer() { Name = name });
         public void CreateNewEmployer(string name) => _employers.Create(new Employer() { Name = name });
         public void CreateNewInvoice() => _invoices.Create(new Invoice());
         public void CreateNewTimeSheet(int employerId, string title) => _timeSheets.Create(new TimeSheet() { EmployerId = employerId, Title = title });
-        
+
         //update---------------------------------------------------------------------------------------------------------------------------------------------
         public void AddInvoiceToContract(int contractId, int invoiceId)
         {
             IEnumerable<Invoice> invoices = _invoices.GetTracking(p => p.ContractId == 0);
-            if (invoices.Count()>0)
+            if (invoices.Count() > 0)
             {
                 invoices.FirstOrDefault().ContractId = contractId;
                 _invoices.SaveChanges();
@@ -59,7 +90,7 @@ namespace NextTry.Class
         {
             var timeSheet = _timeSheets.FindById(timeSheetId);
             var invoice = _invoices.FindById(invoiceId);
-            if (timeSheet!=null & invoice!=null)
+            if (timeSheet != null & invoice != null)
             {
                 invoice.Tasks.Add(timeSheet.Id);
                 _invoices.SaveChanges();
@@ -71,39 +102,23 @@ namespace NextTry.Class
             timeSheet.EmployerId = employerId;
             _timeSheets.Update(timeSheet);
         }
-        
+
         //read-----------------------------------------------------------------------------------------------------------------------------------------------
+
         public Contract GetContractById(int contractId) => _contracts.FindByIdNoTracking(contractId);
+        public Contract GetContractByCustomerId(int customerId) => _contracts.Get(p => p.CustomerId == customerId).FirstOrDefault();
         public Customer GetCustomerById(int customerId) => _customers.FindByIdNoTracking(customerId);
         public Invoice GetInvoiceById(int invoiceId) => _invoices.FindByIdNoTracking(invoiceId);
         public Employer GetEmployerById(int employerId) => _employers.FindByIdNoTracking(employerId);
         public TimeSheet GetTimeSheetById(int timeSheetId) => _timeSheets.FindByIdNoTracking(timeSheetId);
-        public IEnumerable<Customer> GetAllCustomers()
-        {
-            return _customers.Get(p => p.Name != null);
-        }
-        public IEnumerable<Employer> GetAllEmployers()
-        {
-            return _employers.Get(p => p.Name != null);
-        }
-        public IEnumerable<Contract> GetAllOpenContracts()
-        {
-            return _contracts.Get(p => p.Status = true);
-        }
-        public IEnumerable<Invoice> GetAllOpenInvoices()
-        {
-            return _invoices.Get(p => p.IsClosed == false);
-        }
-        public IEnumerable<TimeSheet> GeetAllTimeSheets()
-        {
-            return _timeSheets.Get(p => p.Title != null);
-        }
-        public IEnumerable<Invoice> GetAllInvoicesByEmployerId(int employerId)
-        {
-            var invoices = _invoices.Get(p => p.EmployerId == employerId);
-            return invoices;
-        }
 
+        public IEnumerable<Customer> GetAllCustomers() => _customers.Get(p => p.Name != null);
+        public IEnumerable<Employer> GetAllEmployers() => _employers.Get(p => p.Name != null);
+        public IEnumerable<Contract> GetAllOpenContracts() => _contracts.Get(p => p.Status = true);
+        public IEnumerable<Invoice> GetAllOpenInvoices() => _invoices.Get(p => p.IsClosed == false);
+        public IEnumerable<TimeSheet> GeetAllTimeSheets() => _timeSheets.Get(p => p.Title != null);
+        public IEnumerable<Invoice> GetAllInvoicesByEmployerId(int employerId) => _invoices.Get(p => p.EmployerId == employerId);
+        public IEnumerable<Invoice> GetAllInvoicesInContract(int contractId) => _invoices.Get(p => p.ContractId == contractId);
         //delete---------------------------------------------------------------------------------------------------------------------------------------------
 
     }
@@ -136,11 +151,13 @@ namespace NextTry.Class
         }
         public void CreateNewInvoice(int contractId, int employerId, decimal hourCost)
         {
-            _invoices.Create(new Invoice() { 
-                ContractId = contractId, 
-                EmployerId = employerId, 
-                HourCost = hourCost, 
-                IsClosed = false });
+            _invoices.Create(new Invoice()
+            {
+                ContractId = contractId,
+                EmployerId = employerId,
+                HourCost = hourCost,
+                IsClosed = false
+            });
         }
         public void AddInvoiceToContract(int contractId, int invoiceId)
         {

@@ -35,42 +35,41 @@ namespace NextTry.Controllers
 
         //create---------------------------------------------------------------------------------------------------------------------------------------------
         
-        //[HttpPost("db/add/contract/CustomerId/{cId}/status/{st}")]
-        //public async Task<IActionResult> CreateColumnInTable([FromRoute] int cId, [FromRoute] int st)
-        //{
-        //    await Task.Run(() => _contracts.Create(new Contract() { CustomerId = cId, Status = true ? st > 1 : false }));
-
-        //    _logger.LogInformation("admin Working");
-
-        //    return Ok();
-        //}
-        //[HttpPost("db/add/invoice/cost/{cost}")]
-        //public async Task<IActionResult> CreateInvoiceInTable([FromRoute] int cost)
-        //{
-        //    await Task.Run(() => _invoices.Create(new Invoice() { Cost = cost }));
-        //    _logger.LogInformation("creating invoice");
-        //    return Ok();
-        //}
-
-
+        /// <summary>
+        /// Создание контракта по ID заказчика
+        /// </summary>
+        /// <param name="cId">ID заказчика в базе данных</param>
+        /// <returns>200 ok</returns>
         [HttpPost("db/new/contract/customerId/{cId}")]
         public async Task<IActionResult> CreateNewContract([FromRoute] int cId)
         {
             await Task.Run(() => _worker.CreateNewContract(cId));
+            if (true)
+            {
+
+            }
             return Ok();
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpPost("db/new/customer/{name}")]
         public async Task<IActionResult> CreateNewCustomer([FromRoute] string name)
         {
             await Task.Run(() => _worker.CreateNewCustomer(name));
             return Ok();
         }
+        
         [HttpPost("db/new/employer/{name}")]
         public async Task<IActionResult> CreateNewEmployer([FromRoute] string name)
         {
             await Task.Run(() => _worker.CreateNewEmployer(name));
             return Ok();
         }
+        
         [HttpPost("db/new/invoice/")]
         public async Task<IActionResult> CreateNewInvoice()
         {
@@ -78,43 +77,37 @@ namespace NextTry.Controllers
             return Ok();
         }
         
-
-
-        //public async Task<IActionResult> CreateInvoiceInTable([FromRoute] int cost)
-        //{
-
-        //}
-        
         //read-----------------------------------------------------------------------------------------------------------------------------------------------
+        
         [HttpGet("db/contract/{cId}")]
         public async Task<IActionResult> GetContractInfo([FromRoute] int cId)
         {
-            var result = await Task.Run(() =>_worker.GetContractById(cId));
-            return Ok(result);
+            return Ok(await Task.Run(() => _worker.GetContractById(cId)));
         }
         [HttpGet("db/invoice/{iId}")]
         public async Task<IActionResult> GetInvoiceInfo([FromRoute] int iId)
         {
-            var result = await Task.Run(() => _worker.GetInvoiceById(iId));
-            return Ok(result);
+            return Ok(await Task.Run(() => _worker.GetInvoiceById(iId)));
         }
         [HttpGet("db/customer/{cId}")]
         public async Task<IActionResult> GetCustomerInfo([FromRoute] int cId)
         {
-            var result = await Task.Run(() => _worker.GetCustomerById(cId));
-            return Ok(result);
+            return Ok(await Task.Run(() => _worker.GetCustomerById(cId)));
         }
         [HttpGet("db/employer/{eId}")]
         public async Task<IActionResult> GetEmployerInfo([FromRoute] int eId)
         {
-            var result = await Task.Run(() => _worker.GetEmployerById(eId));
-            return Ok(result);
+            return Ok(await Task.Run(() => _worker.GetEmployerById(eId)));
         }
         [HttpGet("db/timesheet/{tsId}")]
         public async Task<IActionResult> GetTimeSheetInfo([FromRoute] int tsId)
         {
-            var result = await Task.Run(() => _worker.GetTimeSheetById(tsId));
-            return Ok(result);
+            return Ok(await Task.Run(() => _worker.GetTimeSheetById(tsId)));
+        }
+        [HttpGet("db/contract/list/customerId/{cId}")]
+        public async Task<IActionResult> GetContractOfCustomer([FromRoute] int cId)
+        {
+            return Ok(await Task.Run(() => _worker.GetContractByCustomerId(cId)));
         }
 
         //update---------------------------------------------------------------------------------------------------------------------------------------------

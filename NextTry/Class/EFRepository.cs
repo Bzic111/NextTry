@@ -74,5 +74,9 @@ namespace NextTry.Class
         {
             //IEnumerable<Invoice> invoices = _DBSet.Select<Invoice> .All<Invoice>(p => p.EmployerId = employerId)
         }
+        public int GetLastId<TEntity>() where TEntity : class
+        {
+            return _DBSet.LastOrDefault<TEntity>().Id;
+        }
     }
 }
